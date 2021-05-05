@@ -1,0 +1,30 @@
+# Linux command list
+- `ls`: List files
+- `ls -a`: List hidden files
+- `ls -l`: List file information
+- `mv -T oldname newname`: Rename file
+- `mv oldname newname`: Rename directory
+- `cp source destination `: Copy file
+- `cp source destination `: Copy empty directory
+- `cp -r source destination `: Copy directory and its files
+- `cp -rp source destination`: Copy directory and its files with original permissions. 
+- `mv source/* destination`: Move all files inside a directory to another directory
+- `mv source_dir dest_dir`: Move to relative route
+- `mv /source_dir /dest_dir`: Move to absolute route
+- `mv -b source destination`: Move and backup
+- `find <startingdirectory> <options> <searchterm>`: Find a file
+- `find / -type d -name <searchterm>`: Find a directory
+- `find / -type f -newermt 2021-05-04 ! -newermt 2021-05-05`: Find files created at certain date
+- `find / -type f -size +4G`: Find files by size
+- `find . -user ubuntu`: Find files owned by user
+- `find . -group users`: Find files owned by group
+- `find -perm mode`: Find files by permission
+- `find . -type f -name <searchterm> -exec cat {} \;`: Find file and execute a command
+- `grep <searchterm> <file>`: Search for word in file
+- `grep -v <searchterm> <file>`: Search for lines in file not containing the search term
+- `history | grep <searchterm>`: Search in command history
+- `echo "file1 file2 file3" | xargs touch`: Pipe commands with xargs
+- `find /etc -perm 777 -user root`: Find all files in _/etc_ with 777 permissions and root user
+- `command > file.txt`: Write command output to file
+- `command >> file.txt`: Append to file
+- `man command`: Manual page for command
