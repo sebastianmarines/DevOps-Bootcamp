@@ -14,12 +14,12 @@ The `chmod` command can be used with symbolic and absolute forms.
 
 ### Symbolic
 This method consists of at least three parts:
-| Access class | Operator | Access Type |
-| ------------ | -------- | ----------- |
-| u (user) | + (add access) | r (read) |
-| g (group) | - (remove access) | w (write) |
-| o (other) | = (set exact access) | x (execute) |
-| a (all: u, g and o) | |
+| Access class        | Operator             | Access Type |
+| ------------------- | -------------------- | ----------- |
+| u (user)            | + (add access)       | r (read)    |
+| g (group)           | - (remove access)    | w (write)   |
+| o (other)           | = (set exact access) | x (execute) |
+| a (all: u, g and o) |                      |
 
 Example: `chmod a+r file`
 
