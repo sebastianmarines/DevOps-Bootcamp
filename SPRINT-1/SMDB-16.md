@@ -22,9 +22,6 @@ Shows details about files being used by all the running processes.
 ## Iostat
 This command is used to monitor the system I/O, and help you visualize the system's load; it is often used to identify performance issues with storage devices.
 
-## Pkstat
-..
-
 ## Df
 _Disk Free_ gives you an overview of your file system and all mounted disks.
 
