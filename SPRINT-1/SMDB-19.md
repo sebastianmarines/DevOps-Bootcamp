@@ -12,3 +12,20 @@ Swap is a space in linux that is used when the amount of physical RAM memory is 
 
 ## Fstab
 The fstab file is used to define how partitions, devices, or remote file systems should be mounted into the file system.
+
+The file systems definitions will be converted into systemd mount units at boot.
+
+The `mount` command uses the fstab file to mount devices.
+
+```
+# <device>            <dir>     <type>     <options>      <dump> <fsck>
+LABEL=cloudimg-rootfs   /        ext4   defaults,discard     0      1
+```
+
+- **device**: Describes the file system to be mounted
+- **dir**: Where to mount it
+- **type**: The file system type
+- **options**: Mount options
+- **dump**: Configure checking by the `dump` utility
+- **fsck**: The order for filesystems check at boot time. The root device should be 1. Other partitions should be 2 or 0 to disable checking
+
