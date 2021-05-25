@@ -11,3 +11,4 @@ Example:
 Swap is a space in linux that is used when the amount of physical RAM memory is full. When the system runs out of RAM, inactive pages are moved from the RAM to the swap space.
 
 ## Fstab
+The fstab file is used to define how partitions, devices, or remote file systems should be mounted into the file system.
