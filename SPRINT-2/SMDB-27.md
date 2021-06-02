@@ -149,7 +149,7 @@ If an interpreter is not specified, it fallbacks to `/bin/sh`.
    echo $url
 ```
 
-```terminal
+```console
    $ ./SCRIPT.sh
    https://google.com
 ```
