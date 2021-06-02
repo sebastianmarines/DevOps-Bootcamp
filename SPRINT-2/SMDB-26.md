@@ -38,4 +38,18 @@ There are several files where you can store environment variables, and each one 
 
 ## Define and use variables and env variables in scripts
 
+To define a variable inside a script you need to use the following syntax:
 
+```bash
+   VAR_NAME="VALUE"
+```
+
+And to use a variable you need to prepend the name with a *$*:
+```bash
+   echo $VAR_NAME
+```
+
+To use an enviroment variable inside a script you use the same *$* syntax, but you need to set the variable beforehand, either by exporting them or setting them like this:
+```console
+   $ VAR="VALUE" sh script.sh
+```
