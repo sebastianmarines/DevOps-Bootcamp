@@ -1,6 +1,6 @@
 <div align="center">
   <img src="logo.png">
-  <h1>Notes for the DevOps bootcamp from ClickIT</h1>
+  <h1>Notes from ClickIT DevOps bootcamp</h1>
 </div>
 
 - [SPRINT 1](SPRINT-1/)
