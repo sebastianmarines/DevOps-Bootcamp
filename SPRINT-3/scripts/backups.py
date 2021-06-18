@@ -14,6 +14,7 @@ import boto3
 HOME = "/home/ubuntu"
 BACKUPS = "/var/backups/home"
 BUCKET = "sebastianmarines"
+RECEIVER = "sebastian0marines@gmail.com"
 
 
 def new_backup(path: str, name: str) -> None:
@@ -55,7 +56,7 @@ if __name__ == "__main__":
         S3.upload_file(last_backup, BUCKET, old_backups[0])
         os.remove(last_backup)
         new_backup(HOME, current_date)
-        send_email("sebastian0marines@gmail.com", "Backup creado con exito")
+        send_email(RECEIVER, "Backup creado con exito")
     else:
-        send_email("sebastian0marines@gmail.com", "No hay espacio suficiente")
+        send_email(RECEIVER, "No hay espacio suficiente")
 
