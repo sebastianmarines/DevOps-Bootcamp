@@ -1,13 +1,13 @@
-import os
-import sys
-import logging
-import subprocess
 import argparse
+import logging
+import os
 import secrets
 import shutil
-import requests
+import subprocess
+import sys
 from typing import Tuple
 
+import requests
 
 INSTALLATION_COMMANDS = (
     "apt update",
