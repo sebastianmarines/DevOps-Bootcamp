@@ -58,7 +58,7 @@ def setup_wordpress(
         f"wp config create --dbname=wordpress --dbuser={db_user} --dbpass={db_password}"
     )
     _run_wp_command(
-        f'wp core install --url={site_url} --title="Este es mi sitio hecho con WordPress" --admin_user={user} --admin_password={password} --admin_email={email}'
+        f'wp core install --url={site_url} --title="Blog" --admin_user={user} --admin_password={password} --admin_email={email}'
     )
 
 
