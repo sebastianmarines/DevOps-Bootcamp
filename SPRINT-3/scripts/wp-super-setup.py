@@ -4,6 +4,8 @@ import logging
 import subprocess
 import argparse
 import secrets
+import shutil
+import requests
 from typing import Tuple
 
 
@@ -14,6 +16,8 @@ INSTALLATION_COMMANDS = (
     "apt install -y php-curl php-gd php-intl php-mbstring php-soap php-xml php-xmlrpc php-zip",
     "systemctl restart php7.4-fpm",
 )
+
+WP_PATH = "/var/www/wordpress"
 
 
 def run_command(command: str, *args):
@@ -51,12 +55,24 @@ if __name__ == "__main__":
     parser.add_argument("wppassword", help="Wordpress admin password")
     parser.add_argument("--mysqluser", help="MySQL user for Wordpress")
     parser.add_argument("--mysqlpassword", help="MySQL password")
-    parser.add_argument("--debug", action="store_true")
 
     args = parser.parse_args()
 
-    if not args.debug:
-        for command in INSTALLATION_COMMANDS:
-            run_command(command)
+    for command in INSTALLATION_COMMANDS:
+        run_command(command)
 
-        db_user, db_password = setup_database(args.mysqluser, args.mysqlpassword)
+    db_user, db_password = setup_database(args.mysqluser, args.mysqlpassword)
+
+    os.mkdir(WP_PATH)
+    shutil.chown(WP_PATH, "www-data", "www-data")
+
+    with open("/etc/nginx/sites-available/wordpress", "w") as nginx:
+        config = requests.get(
+            "https://raw.githubusercontent.com/sebastianmarines/DevOps-Bootcamp/master/SPRINT-3/scripts/nginx-wp.conf"
+        )
+        nginx.write(config.content)
+    os.symlink(
+        "/etc/nginx/sites-available/wordpress", "/etc/nginx/sites-enabled/wordpress"
+    )
+    os.unlink("/etc/nginx/sites-enabled/default")
+    run_command("service nginx restart")
