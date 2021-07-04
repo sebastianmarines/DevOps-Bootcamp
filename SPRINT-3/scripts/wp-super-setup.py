@@ -60,11 +60,10 @@ def setup_wordpress(
     _run_wp_command(
         f'wp core install --url={site_url} --title="Blog" --admin_user={user} --admin_password={password} --admin_email={email}'
     )
+    _run_wp_command("wp plugin install  woocommerce --activate")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(format="%(asctime)s %(message)s")
-
     if os.getuid() != 0:
         print("This script needs to be run as root. Exiting", file=sys.stderr)
         sys.exit(os.EX_NOPERM)
@@ -72,7 +71,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="WP, LEMP, and phpMyAdmin setup script."
     )
-    # TODO ask password inside prompt
+
     parser.add_argument("wp_user", help="Wordpress admin user")
     parser.add_argument("wp_password", help="Wordpress admin password")
     parser.add_argument("site_url", help="Site url")
