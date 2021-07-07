@@ -17,17 +17,12 @@ RECEIVER = "sebastian0marines@gmail.com"
 
 
 def new_backup(path: str, name: str) -> None:
-    directory = (
-        tup
-        for tup in os.walk(path)
-        if ".ssh" not in tup[0]
-        if ".aws" not in tup[0]
-        if ".git" not in tup[0]
-    )
+    directory = (tup for tup in os.walk(path) if ".ssh" not in tup[0]
+                 if ".aws" not in tup[0] if ".git" not in tup[0])
     files = (os.path.join(li[0], file) for li in directory for file in li[2])
-    with tarfile.open(
-        os.path.join("/var/backups/home", f"{name}-Full_backup.tar.gz"), mode="w:gz"
-    ) as tar:
+    with tarfile.open(os.path.join("/var/backups/home",
+                                   f"{name}-Full_backup.tar.gz"),
+                      mode="w:gz") as tar:
         for file in files:
             tar.add(file)
 
@@ -61,8 +56,7 @@ if __name__ == "__main__":
     old_backups.sort(
         reverse=True,
         key=lambda file: datetime.datetime.strptime(
-            file.split(".")[0].strip("-Full_backup.tar.gz"), "%Y%m%d%H%M%S"
-        ),
+            file.split(".")[0].strip("-Full_backup.tar.gz"), "%Y%m%d%H%M%S"),
     )
     last_backup = os.path.join(BACKUPS, old_backups[0])
 

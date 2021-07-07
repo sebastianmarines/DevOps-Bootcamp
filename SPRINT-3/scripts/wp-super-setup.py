@@ -34,7 +34,8 @@ def setup_database(user: str, password: str) -> Tuple[str, str]:
     _run_db_command(
         "CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
     )
-    _run_db_command(f"CREATE USER '{_user}'@'localhost' IDENTIFIED BY '{_password}';")
+    _run_db_command(
+        f"CREATE USER '{_user}'@'localhost' IDENTIFIED BY '{_password}';")
     _run_db_command(f"GRANT ALL ON wordpress.* TO '{_user}'@'localhost';")
 
     return _user, _password
@@ -69,8 +70,7 @@ if __name__ == "__main__":
         sys.exit(os.EX_NOPERM)
 
     parser = argparse.ArgumentParser(
-        description="WP, LEMP, and phpMyAdmin setup script."
-    )
+        description="WP, LEMP, and phpMyAdmin setup script.")
 
     parser.add_argument("wp_user", help="Wordpress admin user")
     parser.add_argument("wp_password", help="Wordpress admin password")
@@ -95,9 +95,8 @@ if __name__ == "__main__":
         )
         nginx.write(config.content)
 
-    os.symlink(
-        "/etc/nginx/sites-available/wordpress", "/etc/nginx/sites-enabled/wordpress"
-    )
+    os.symlink("/etc/nginx/sites-available/wordpress",
+               "/etc/nginx/sites-enabled/wordpress")
     os.unlink("/etc/nginx/sites-enabled/default")
     run_command("service nginx restart")
 
