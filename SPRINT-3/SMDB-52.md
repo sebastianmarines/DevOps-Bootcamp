@@ -9,4 +9,11 @@
   - **deny**: No rendering within a frame.
   - **sameorigin**: No rendering if origin mismatch.
   - **allow-from: DOMAIN**: Allows rendering framed content if loaded from *DOMAIN*.
-- **X-Content-Type-Options**: 
+- **X-Content-Type-Options**: Setting this header will prevent the browser from interpreting files as a different MIME type to what is specified in the *Content-Type* HTTP header.
+
+## WP Vulnerabilities
+
+- Outdated themes and plugins
+- SQLi
+- XSS
+- Weak passwords
