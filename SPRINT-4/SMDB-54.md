@@ -13,7 +13,7 @@ There are 4 types of load balancers:
 - CLB (Classic Load Balancer)
 - GLB (Gateway Load Balancer)
 
-### ALB
+###  ALB
 
 An Application Load Balancer is a type of load balancer that functions at the application layer of the OSI model.
 
@@ -21,3 +21,6 @@ When an ALB receives a request, it evaluates the listener rules in priority orde
 
 ## Availability Zones
 
+An availability zone is one or more data centers in an AWS region.
+
+They are independent of each other and have redundant power, networking, and connectivity.
