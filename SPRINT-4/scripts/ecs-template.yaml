@@ -10,6 +10,14 @@ Parameters:
     Type: List<AWS::EC2::Subnet::Id>
     Description: Subnet list
     Default: "subnet-f3335c96,subnet-57941920,subnet-a654f5ff,subnet-6f1ac044"
+  MaxSize:
+    Type: Number
+    Description: Maximum number of instances to be launched in the ECS cluster.
+    Default: "1"
+  DesiredCapacity:
+    Type: Number
+    Description: Number of instances to launch in the ECS cluster.
+    Default: "1"
 
 Resources:
   ECRBackend:
@@ -79,3 +87,46 @@ Resources:
           Value: "30"
       Subnets: !Ref "SubnetId"
       SecurityGroups: [!Ref "EcsSecurityGroup"]
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn: ECSServiceRole
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref "ECSTG"
+      LoadBalancerArn: !Ref "ECSALB"
+      Port: 80
+      Protocol: HTTP
+  ECSALBListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref "ALBListener"
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref "ECSTG"
+      Priority: 1
+      Conditions:
+        - Field: path-pattern
+          Values: [/]
+  ECSTG:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    DependsOn: ECSALB
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Name: !Join ["", [!Ref "AWS::StackName", -ecstg]]
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      VpcId: !Ref "VpcId"
+  ECSAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MaxSize: !Ref "MaxSize"
+      MinSize: "1"
+      VPCZoneIdentifier: !Ref "SubnetId"
+      LaunchConfigurationName: !Ref "ContainerInstances"
+      DesiredCapacity: !Ref "DesiredCapacity"
