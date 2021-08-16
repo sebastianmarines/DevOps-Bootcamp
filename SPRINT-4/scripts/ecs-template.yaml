@@ -6,6 +6,10 @@ Parameters:
     Type: AWS::EC2::VPC::Id
     Description: VPC Id
     Default: "vpc-601f8805"
+  SubnetId:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: Subnet list
+    Default: "subnet-f3335c96,subnet-57941920,subnet-a654f5ff,subnet-6f1ac044"
 
 Resources:
   ECRBackend:
@@ -62,5 +66,16 @@ Resources:
       ContainerDefinitions:
         - Name: ecs-task-definition-sebastian
           Cpu: 10
-          Image: !Join ["", [!GetAtt ECRBackend.RepositoryUri, ":latest"]]
+          # Image: !Join ["", [!GetAtt ECRBackend.RepositoryUri, ":latest"]]
+          Image: nginx:stable
           Memory: 200
+  ECSALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Join ["", [!Ref "AWS::StackName", -ecs-alb]]
+      Scheme: internet-facing
+      LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: "30"
+      Subnets: !Ref "SubnetId"
+      SecurityGroups: [!Ref "EcsSecurityGroup"]
