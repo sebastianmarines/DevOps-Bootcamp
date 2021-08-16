@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: ECS Template
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC Id
+    Default: "vpc-601f8805"
+
+Resources:
+  ECRBackend:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: sebastian-ecr-backend-cfn
+      LifecyclePolicy:
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Keep last 3 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 3
+                },
+                "action": {
+                  "type": "expire"
+                }
+              }
+            ]
+          }
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: sebastian-ecs-cluster-cfn
+  EcsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ECS Security Group
+      VpcId: !Ref "VpcId"
+  EcsSecurityGroupHTTPInbound:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref "EcsSecurityGroup"
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+  EcsSecurityGroupALBports:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref "EcsSecurityGroup"
+      IpProtocol: tcp
+      FromPort: 31000
+      ToPort: 61000
+      SourceSecurityGroupId: !Ref "EcsSecurityGroup"
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Join ["", [!Ref "AWS::StackName", -ecs-task-definition]]
+      ContainerDefinitions:
+        - Name: ecs-task-definition-sebastian
+          Cpu: 10
+          Image: !Join ["", [!GetAtt ECRBackend.RepositoryUri, ":latest"]]
+          Memory: 200
