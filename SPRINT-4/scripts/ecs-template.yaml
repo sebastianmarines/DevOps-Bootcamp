@@ -18,6 +18,18 @@ Parameters:
     Type: Number
     Description: Number of instances to launch in the ECS cluster.
     Default: "1"
+  AMIID:
+    Type: String
+    Description: AMI for Amazon Linux 2 optimized for ECS
+    Default: ami-02b70ab564d80f9e9
+  InstanceType:
+    Type: String
+    Description: EC2 instance type
+    Default: t3.micro
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the ECS instances.
+    Default: Sebastian-n
 
 Resources:
   ECRBackend:
@@ -130,3 +142,25 @@ Resources:
       VPCZoneIdentifier: !Ref "SubnetId"
       LaunchConfigurationName: !Ref "ContainerInstances"
       DesiredCapacity: !Ref "DesiredCapacity"
+  ContainerInstances:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId: !Ref "AMIID"
+      InstanceType: !Ref "InstanceType"
+      SecurityGroups: [!Ref "EcsSecurityGroup"]
+      IamInstanceProfile: !Ref "EC2InstanceProfile"
+      KeyName: !Ref "KeyName"
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config
+          yum install -y aws-cfn-bootstrap
+          /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource ECSAutoScalingGroup --region ${AWS::Region}
+  service:
+    Type: AWS::ECS::Service
+    DependsOn: ALBListener
+    Properties:
+      Cluster: !Ref "ECSCluster"
+      DesiredCount: 1
+      LoadBalancers:
+        - ContainerName: ecs-task-definition-sebastian
