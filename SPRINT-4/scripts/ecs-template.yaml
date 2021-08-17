@@ -79,7 +79,7 @@ Resources:
       FromPort: 31000
       ToPort: 61000
       SourceSecurityGroupId: !Ref "EcsSecurityGroup"
-  TaskDefinition:
+  taskdefinition:
     Type: AWS::ECS::TaskDefinition
     Properties:
       Family: !Join ["", [!Ref "AWS::StackName", -ecs-task-definition]]
@@ -196,16 +196,56 @@ Resources:
                 Resource: "*"
   ServiceScalingTarget:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
-    DependsOn: service
     Properties:
       MaxCapacity: 2
       MinCapacity: 1
       ResourceId:
         !Join ["", [service/, !Ref "ECSCluster", /, !GetAtt [service, Name]]]
-      RoleArn: !GetAtt [AutoScalingRole, Arn]
+      RoleARN: !GetAtt [AutoScalingRole, Arn]
       ScalableDimension: ecs:service:DesiredCount
       ServiceNamespace: ecs
-  AutoscalingRole:
+  ServiceScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: AStepPolicy
+      PolicyType: StepScaling
+      ScalingTargetId: !Ref "ServiceScalingTarget"
+      StepScalingPolicyConfiguration:
+        AdjustmentType: PercentChangeInCapacity
+        Cooldown: 60
+        MetricAggregationType: Average
+        StepAdjustments:
+          - ScalingAdjustment: 200
+            MetricIntervalLowerBound: 0
+  EC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: [ec2.amazonaws.com]
+            Action: ["sts:AssumeRole"]
+      Path: /
+      Policies:
+        - PolicyName: ecs-service
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  [
+                    "ecs:CreateCluster",
+                    "ecs:DeregisterContainerInstance",
+                    "ecs:DiscoverPollEndpoint",
+                    "ecs:Poll",
+                    "ecs:RegisterContainerInstance",
+                    "ecs:StartTelemetrySession",
+                    "ecs:Submit*",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                  ]
+                Resource: "*"
+  AutoScalingRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -228,4 +268,9 @@ Resources:
                     "ecs:DescribeServices",
                     "ecs:UpdateService",
                   ]
-                Resource: "*
+                Resource: "*"
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles: [!Ref "EC2Role"]
