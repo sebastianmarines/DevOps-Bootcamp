@@ -89,6 +89,8 @@ Resources:
           # Image: !Join ["", [!GetAtt ECRBackend.RepositoryUri, ":latest"]]
           Image: nginx:stable
           Memory: 200
+          PortMappings:
+            - ContainerPort: 80
   ECSALB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
