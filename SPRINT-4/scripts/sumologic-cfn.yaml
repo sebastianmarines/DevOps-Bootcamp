@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: A CloudFormation template that creates a role for
+  authenticating with Sumo's AWS integrations.
+Resources:
+  SumoRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS: arn:aws:iam::926226587429:root
+          Action: sts:AssumeRole
+          Condition:
+            StringEquals:
+              sts:ExternalId:
+                us1:0000000000BC1CD2
+      Path: "/"
+      Policies:
+      - PolicyName: SumoPolicy
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+              - cloudwatch:ListMetrics
+              - cloudwatch:GetMetricStatistics
+              - tag:GetResources
+            Resource:
+              "*"
+Outputs:
+  SumoRoleARN:
+    Description: ARN of the created role. Copy this ARN back to Sumo to complete the source creation process.
+    Value: !GetAtt SumoRole.Arn
