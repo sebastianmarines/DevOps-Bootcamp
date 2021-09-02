@@ -30,3 +30,11 @@ resource "aws_instance" "sebastian_terraform" {
 
   vpc_security_group_ids = [aws_security_group.instance-sg.id]
 }
+
+output "intance_ip" {
+  value = aws_instance.sebastian_terraform.public_dns
+}
+
+output "instance_id" {
+  value = aws_instance.sebastian_terraform.id
+}
